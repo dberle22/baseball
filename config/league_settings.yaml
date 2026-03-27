@@ -1,0 +1,36 @@
+league:
+  platform: Yahoo
+  format: head_to_head_categories
+  teams: 12
+  draft_type: snake
+  league_type: redraft
+  hitting_categories:
+    - R
+    - RBI
+    - HR
+    - AVG
+    - OBP
+    - SB
+  pitching_categories:
+    - QS
+    - ERA
+    - WHIP
+    - K
+    - Saves_plus_Holds
+  roster:
+    C: 1
+    1B: 1
+    2B: 1
+    3B: 1
+    SS: 1
+    OF: 3
+    UTIL: 2
+    SP: 2
+    RP: 2
+    P: 4
+    BN: 5
+    IL: 3
+thresholds:
+  hitters_min_pa: 100
+  pitchers_min_ip: 20
+  relievers_min_svh: 5

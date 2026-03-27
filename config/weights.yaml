@@ -1,0 +1,36 @@
+blend:
+  hitters:
+    atc: 0.40
+    steamer: 0.35
+    batx: 0.25
+  pitchers:
+    atc: 0.40
+    steamer: 0.35
+    depth_charts: 0.25
+scoring:
+  hitters:
+    adp_bonus_weight: 0.20
+    upside_weight: 0.15
+  pitchers:
+    adp_bonus_weight: 0.20
+    role_bonus_weight: 0.12
+phase_adjustments:
+  early:
+    hitters: 0.35
+    pitchers: -0.25
+    specialists: 0.00
+    relievers: -0.10
+  middle:
+    hitters: 0.10
+    pitchers: 0.00
+    specialists: 0.05
+    relievers: 0.00
+  late:
+    hitters: 0.00
+    pitchers: 0.05
+    specialists: 0.20
+    relievers: 0.30
+tiering:
+  score_gap_factor: 0.18
+  min_score_gap: 0.12
+  max_players_per_tier: 30
