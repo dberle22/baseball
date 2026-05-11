@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Fantasy Baseball{% endblock %}
+
+{% block content %}
+  <div class="grid">
+    <section class="panel">
+      <h2>My Week</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Current</th>
+            <th>Projected</th>
+            <th>Remaining</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in matchup_tracker %}
+            <tr>
+              <td>{{ row.category }}</td>
+              <td>
+                {{ row.my_total }} - {{ row.opponent_total }}
+                <span class="status-pill {{ row.status_class }}">{{ row.status }}</span>
+              </td>
+              <td>
+                {{ row.my_projected_total }} - {{ row.opponent_projected_total }}
+                <span class="status-pill {{ row.projected_status_class }}">{{ row.projected_status }}</span>
+              </td>
+              <td>{{ row.my_remaining_opportunities }} / {{ row.opponent_remaining_opportunities }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>SP Starts</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Pitcher</th>
+            <th>Date</th>
+            <th>Matchup</th>
+            <th>Projection</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for start in sp_starts %}
+            <tr class="{% if start.completed %}completed-row{% endif %}">
+              <td>
+                {{ start.name }}
+                {% if start.actual_line %}
+                  <div class="muted">{{ start.actual_line }}</div>
+                {% endif %}
+              </td>
+              <td>{{ start.game_date }}</td>
+              <td>
+                {{ start.home_away }} vs {{ start.opponent_team }}
+                <span class="grade-pill {{ start.grade_class }}">{{ start.matchup_grade or "TBD" }}</span>
+              </td>
+              <td>K {{ start.projected_k or "NA" }} | ERA {{ start.projected_era or "NA" }} | WHIP {{ start.projected_whip or "NA" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>Waiver Recommendations</h2>
+      <div class="split">
+        <div>
+          <h3>SP Streamers</h3>
+          <table>
+            <tbody>
+              {% for player in waiver_groups.sp_streamers %}
+                <tr>
+                  <td>{{ player.name }}</td>
+                  <td><span class="grade-pill {{ player.grade_class }}">{{ player.matchup_grade or "TBD" }}</span></td>
+                  <td>{{ "%.3f"|format(player.score) if player.score is not none else "NA" }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h3>General Pickups</h3>
+          <table>
+            <tbody>
+              {% for player in waiver_groups.hitters + waiver_groups.relievers %}
+                <tr>
+                  <td>{{ player.name }}</td>
+                  <td>{{ player.position }}</td>
+                  <td><span class="grade-pill {{ player.grade_class }}">{{ player.matchup_grade or "TBD" }}</span></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h3>Rising Players</h3>
+          <table>
+            <tbody>
+              {% for player in waiver_groups.rising_players %}
+                <tr>
+                  <td>{{ player.name }}</td>
+                  <td>{{ player.notes }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+{% endblock %}

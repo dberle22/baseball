@@ -1,14 +1,22 @@
 input_files:
   positions: data/2026_positions.csv
   hitters:
-    atc: data/fangraphs-atc-hitters.csv
-    steamer: data/fangraphs-steamer-hitters.csv
-    batx: data/fangraphs-batx-hitters.csv
+    atc: data/fangraphs/fangraphs-atc-hitters.csv
+    steamer: data/fangraphs/fangraphs-steamer-hitters.csv
+    batx: data/fangraphs/fangraphs-batx-hitters.csv
   pitchers:
-    atc: data/fangraphs-atc-pitchers.csv
-    steamer: data/fangraphs-steamer-pitchers.csv
-    depth_charts: data/fangraphs-depth-charts-pitchers.csv
+    atc: data/fangraphs/fangraphs-atc-pitchers.csv
+    steamer: data/fangraphs/fangraphs-steamer-pitchers.csv
+    depth_charts: data/fangraphs/fangraphs-depth-charts-pitchers.csv
+  inseason_hitters:
+    steamer: data/fangraphs/inseason-steamer-hitters.csv
+    zips_dc: data/fangraphs/inseason-zips-dc-hitters.csv
+  inseason_pitchers:
+    steamer: data/fangraphs/inseason-steamer-pitchers.csv
+    zips_dc: data/fangraphs/inseason-zips-dc-pitchers.csv
 output:
   processed_dir: data/processed
   exports_dir: data/exports
   workbook_name: draft_board.xlsx
+cache:
+  base_dir: data/cache

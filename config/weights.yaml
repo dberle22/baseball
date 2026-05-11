@@ -34,3 +34,11 @@ tiering:
   score_gap_factor: 0.18
   min_score_gap: 0.12
   max_players_per_tier: 30
+inseason:
+  streamers:
+    matchup_grade: 0.35
+    recent_form: 0.30
+    projected_k_rate: 0.20
+    projected_era_whip: 0.15
+  general_pickups:
+    recent_form_boost: 0.20

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}My Week | Fantasy Baseball{% endblock %}
+
+{% block content %}
+  <div class="grid">
+    <section class="panel">
+      <h2>Category Tracker</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Current Totals</th>
+            <th>Status</th>
+            <th>Projected Totals</th>
+            <th>Projected</th>
+            <th>Remaining Opportunities</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in matchup_tracker %}
+            <tr>
+              <td>{{ row.category }}</td>
+              <td>{{ row.my_total }} - {{ row.opponent_total }}</td>
+              <td><span class="status-pill {{ row.status_class }}">{{ row.status }}</span></td>
+              <td>{{ row.my_projected_total }} - {{ row.opponent_projected_total }}</td>
+              <td><span class="status-pill {{ row.projected_status_class }}">{{ row.projected_status }}</span></td>
+              <td>{{ row.my_remaining_opportunities }} / {{ row.opponent_remaining_opportunities }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>SP Starts This Week</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Pitcher</th>
+            <th>Date</th>
+            <th>Opponent</th>
+            <th>Home/Away</th>
+            <th>Grade</th>
+            <th>Projected K / ERA / WHIP</th>
+            <th>Actual</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for start in sp_starts %}
+            <tr class="{% if start.completed %}completed-row{% endif %}">
+              <td>{{ start.name }}</td>
+              <td>{{ start.game_date }}</td>
+              <td>{{ start.opponent_team }}</td>
+              <td>{{ start.home_away }}</td>
+              <td><span class="grade-pill {{ start.grade_class }}">{{ start.matchup_grade or "TBD" }}</span></td>
+              <td>K {{ start.projected_k or "NA" }} / ERA {{ start.projected_era or "NA" }} / WHIP {{ start.projected_whip or "NA" }}</td>
+              <td>{{ start.actual_line or start.game_status or "Upcoming" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+  </div>
+{% endblock %}

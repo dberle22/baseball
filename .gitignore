@@ -4,3 +4,6 @@
 __pycache__/
 *.pyc
 *.csv
+*.env
+data/cache/*
+!data/cache/.gitkeep

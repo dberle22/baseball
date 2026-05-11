@@ -8,6 +8,8 @@ from openpyxl import load_workbook
 
 from src.pipeline import build_draft_board
 from src.standardize import apply_hitter_positions, standardize_projection
+from src.yahoo.auth import _is_localhost_callback, _oauth_data_is_present
+from src.yahoo.client import get_free_agents
 
 
 def test_standardize_pitchers_derives_saves_plus_holds() -> None:
@@ -119,3 +121,73 @@ def test_rebuild_preserves_workbook_inputs(tmp_path: Path) -> None:
     assert rebuilt["my_team"]["B4"].value == "Shohei Ohtani"
     assert rebuilt["my_team"]["AA4"].value == 1.5
     rebuilt.close()
+
+
+def test_get_free_agents_dedupes_and_sorts() -> None:
+    class StubLeague:
+        def free_agents(self, position: str):
+            if position == "B":
+                return [
+                    {"player_id": 2, "name": "Batter Two", "eligible_positions": ["1B"], "percent_owned": 15},
+                    {"player_id": 1, "name": "Dual Player", "eligible_positions": ["OF"], "percent_owned": 52},
+                ]
+            return [
+                {"player_id": 1, "name": "Dual Player", "eligible_positions": ["OF", "SP"], "percent_owned": 52},
+                {"player_id": 3, "name": "Pitcher Three", "eligible_positions": ["SP"], "percent_owned": 8},
+            ]
+
+    from src.yahoo import client as yahoo_client
+
+    original_get_league = yahoo_client._get_league
+    try:
+        yahoo_client._get_league = lambda sc, league_id=None: StubLeague()
+        players = get_free_agents(sc=object(), count=3)
+    finally:
+        yahoo_client._get_league = original_get_league
+
+    assert [player["player_id"] for player in players] == [1, 2, 3]
+    assert players[0]["positions"] == ["OF", "SP"]
+
+
+def test_normalize_numeric_league_id_from_current_season_candidates() -> None:
+    class StubGame:
+        def league_ids(self, **kwargs):
+            if kwargs.get("seasons"):
+                return ["458.l.12345", "458.l.67890"]
+            return []
+
+    class StubYfa:
+        @staticmethod
+        def Game(sc, code):
+            assert code == "mlb"
+            return StubGame()
+
+    from src.yahoo import client as yahoo_client
+
+    original_import_yfa = yahoo_client._import_yfa
+    original_get_league_id = yahoo_client.get_league_id
+    try:
+        yahoo_client._import_yfa = lambda: StubYfa()
+        yahoo_client.get_league_id = lambda: "67890"
+        resolved = yahoo_client._normalize_league_id(sc=object())
+    finally:
+        yahoo_client._import_yfa = original_import_yfa
+        yahoo_client.get_league_id = original_get_league_id
+
+    assert resolved == "458.l.67890"
+
+
+def test_is_localhost_callback_recognizes_local_http_callback() -> None:
+    assert _is_localhost_callback("http://localhost:8080/callback") is True
+    assert _is_localhost_callback("http://127.0.0.1:8080/callback") is True
+    assert _is_localhost_callback("https://localhost:8080/callback") is True
+    assert _is_localhost_callback("oob") is False
+
+
+def test_oauth_data_is_present_requires_access_refresh_and_token_time(tmp_path: Path) -> None:
+    token_path = tmp_path / "token.json"
+    token_path.write_text('{"access_token": "a", "refresh_token": "b", "token_time": 1}', encoding="utf-8")
+    assert _oauth_data_is_present(token_path) is True
+
+    token_path.write_text('{"access_token": "a"}', encoding="utf-8")
+    assert _oauth_data_is_present(token_path) is False

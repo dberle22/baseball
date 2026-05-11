@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Waivers | Fantasy Baseball{% endblock %}
+
+{% block content %}
+  <div class="grid">
+    <section class="panel">
+      <h2>SP Streamers</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>Score</th>
+            <th>Starts</th>
+            <th>Matchups</th>
+            <th>Recent Form</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for player in waiver_groups.sp_streamers %}
+            <tr>
+              <td>{{ player.name }}</td>
+              <td>{{ "%.3f"|format(player.score) if player.score is not none else "NA" }}</td>
+              <td>{{ player.start_count_this_week }}</td>
+              <td><span class="grade-pill {{ player.grade_class }}">{{ player.matchup_grade or "TBD" }}</span></td>
+              <td>{{ player.key_stats }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>General Pickups</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>Pos</th>
+            <th>Type</th>
+            <th>Score</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for player in waiver_groups.hitters + waiver_groups.relievers %}
+            <tr>
+              <td>{{ player.name }}</td>
+              <td>{{ player.position }}</td>
+              <td>{{ player.type }}</td>
+              <td>{{ "%.3f"|format(player.score) if player.score is not none else "NA" }}</td>
+              <td>{{ player.notes }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>Rising Players</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>Pos</th>
+            <th>Score</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for player in waiver_groups.rising_players %}
+            <tr>
+              <td>{{ player.name }}</td>
+              <td>{{ player.position }}</td>
+              <td>{{ "%.3f"|format(player.score) if player.score is not none else "NA" }}</td>
+              <td>{{ player.notes }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+  </div>
+{% endblock %}
